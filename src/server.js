@@ -1,19 +1,19 @@
 const http = require('http');
-const htmlHandler = require('./htmlResponses.js');
-const jsonHandler = require('./jsonResponses.js');
+const clientHandler = require('./clientResponses.js');
+const apiHandler = require('./apiResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
-    '/': htmlHandler.getIndex,
-    '/style.css': htmlHandler.getStyle,
-    '/success': jsonHandler.success,
-    '/badRequest': jsonHandler.badRequest,
-    '/unauthorized': jsonHandler.unauthorized,
-    '/forbidden': jsonHandler.forbidden,
-    '/internal': jsonHandler.internal,
-    '/notImplemented': jsonHandler.notImplemented,
-    notFound: jsonHandler.notFound,
+    '/': clientHandler.getIndex,
+    '/style.css': clientHandler.getStyle,
+    '/success': apiHandler.success,
+    '/badRequest': apiHandler.badRequest,
+    '/unauthorized': apiHandler.unauthorized,
+    '/forbidden': apiHandler.forbidden,
+    '/internal': apiHandler.internal,
+    '/notImplemented': apiHandler.notImplemented,
+    notFound: apiHandler.notFound,
 };
 
 
