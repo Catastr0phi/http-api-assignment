@@ -112,6 +112,16 @@ const unauthorized = (request, response) => {
 }
 
 const forbidden = (request, response) => {
+    if (request.acceptedTypes[0] === 'text/xml') {
+        let forbiddenXML = '<response>';
+        forbiddenXML = `${forbiddenXML} <message>This is a successful response</message>`;
+        forbiddenXML = `${forbiddenXML} <id>forbidden</id>`;
+        forbiddenXML = `${forbiddenXML} </response>`;
+
+        // return response passing out string and content type
+        return respond(request, response, 403, forbiddenXML, 'text/xml');
+    }
+
     const forbiddenJSON = {
         message: 'You do not have access to this content',
         id: 'forbidden',
@@ -122,6 +132,16 @@ const forbidden = (request, response) => {
 }
 
 const internal = (request, response) => {
+    if (request.acceptedTypes[0] === 'text/xml') {
+        let internalXML = '<response>';
+        internalXML = `${internalXML} <message>This is a successful response</message>`;
+        internalXML = `${internalXML} <id>internalError</id>`;
+        internalXML = `${internalXML} </response>`;
+
+        // return response passing out string and content type
+        return respond(request, response, 500, internalXML, 'text/xml');
+    }
+
     const internalJSON = {
         message: 'Internal Server Error. Something went wrong.',
         id: 'internalError',
@@ -132,6 +152,15 @@ const internal = (request, response) => {
 }
 
 const notImplemented = (request, response) => {
+    if (request.acceptedTypes[0] === 'text/xml') {
+        let notImplementedXML = '<response>';
+        notImplementedXML = `${notImplementedXML} <message>This is a successful response</message>`;
+        notImplementedXML = `${notImplementedXML} <id>notImplemented</id>`;
+        notImplementedXML = `${notImplementedXML} </response>`;
+
+        // return response passing out string and content type
+        return respond(request, response, 501, notImplementedXML, 'text/xml');
+    }
     const notImplementedJSON = {
         message: 'A get request for this page has not been implemented yet. Check again later for updated content.',
         id: 'notImplemented',
@@ -142,6 +171,16 @@ const notImplemented = (request, response) => {
 }
 
 const notFound = (request, response) => {
+    if (request.acceptedTypes[0] === 'text/xml') {
+        let notFoundXML = '<response>';
+        notFoundXML = `${notFoundXML} <message>This is a successful response</message>`;
+        notFoundXML = `${notFoundXML} <id>notFound</id>`;
+        notFoundXML = `${notFoundXML} </response>`;
+
+        // return response passing out string and content type
+        return respond(request, response, 404, notFoundXML, 'text/xml');
+    }
+
     const notFoundJSON = {
         message: 'The page you are looking for was not found.',
         id: 'notFound',
