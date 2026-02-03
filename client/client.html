@@ -1,13 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>Our simple HTTP server</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
-  
+
   <script>
+
+    const handleResponse = (response) => {
+      response.text().then((responseText) => {
+
+        // Get content type
+        const contentType = response.headers.get('Content-Type');
+
+        // Get page's content section
+        const content = document.querySelector('#content');
+        // Reset content
+        content.innerHTML = '';
+
+        const statusHeader = document.createElement('h1');
+        const statusMessage = document.createElement('p');
+
+        statusHeader.textContent = `${response.statusText}`;
+
+        //If the server sent back json
+        if (contentType === 'application/json') {
+
+          const parsedResponse = JSON.parse(responseText);
+
+          statusMessage.textContent = `Message: ${parsedResponse.message}`;
+
+        } else if (contentType === 'text/xml') { //If the server sent back xml
+
+          const parsedResponse = new window.DOMParser().parseFromString(responseText, 'text/xml');
+
+          statusMessage.textContent = 'Message: ' + parsedResponse.querySelector('message').textContent;
+        }
+
+        content.appendChild(statusHeader);
+        content.appendChild(statusMessage);
+      })
+    }
+
+    const sendFetchRequest = (url, type) => {
+      const options = {
+        method: 'GET',
+        headers: { 'Accept': type },
+      }
+
+      const fetchPromise = fetch(url, options);
+
+      fetchPromise.then((response) => { handleResponse(response) });
+    }
+
+    const init = () => {
+      // References to objects on page
+      const pageSelector = document.querySelector("#page");
+      const typeSelector = document.querySelector("#type");
+      const sendButton = document.querySelector("#send");
+
+      // Sends proper request from selector values
+      const sendRequest = () => sendFetchRequest(pageSelector.value, typeSelector.value);
+
+      // Send request on button click
+      sendButton.addEventListener('click', sendRequest);
+    }
+
+    window.onload = init;
 
   </script>
 </head>
+
 <body>
   <section id="top">
     <h3>Status Code Tests</h3>
@@ -29,4 +92,5 @@
   <section id="content">
   </section>
 </body>
+
 </html>
