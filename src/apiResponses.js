@@ -13,9 +13,7 @@ const respond = (request, response, status, object, type) => {
 
 const success = (request, response) => {
     if (request.acceptedTypes[0] === 'text/xml') {
-        let successXML = '<response>';
-        successXML = `${successXML} <message>This is a successful response</message>`;
-        successXML = `${successXML} </response>`;
+        let successXML = buildXML('This is a successful response');
 
         // return response passing out string and content type
         return respond(request, response, 200, successXML, 'text/xml');
@@ -33,20 +31,18 @@ const badRequest = (request, response) => {
 
     if (request.acceptedTypes[0] === 'text/xml') {
         let code = 200;
-        let badRequestXML = '<response>';
+        let badRequestXML;
 
         // Set invalid message and ID
         if (!request.query.valid || request.query.valid !== 'true') {
-            badRequestXML = `${badRequestXML} <message>Missing valid query parameter set to true</message>`;
-            badRequestXML = `${badRequestXML} <id>badRequest</id>`;
             code = 400; // Update error code
+
+            badRequestXML = buildXML('Missing valid query parameter set to true', 'badRequest');
         }
         // Valid message
         else {
-            badRequestXML = `${badRequestXML} <message>This request has the required parameters</message>`;
+            badRequestXML = buildXML('This request has the required parameters');
         }
-
-        badRequestXML = `${badRequestXML} </response>`;
 
         return respond(request, response, code, badRequestXML, 'text/xml');
     }
@@ -74,20 +70,18 @@ const badRequest = (request, response) => {
 const unauthorized = (request, response) => {
     if (request.acceptedTypes[0] === 'text/xml') {
         let code = 200;
-        let unauthorizedXML = '<response>';
+        let unauthorizedXML;
 
         // Set invalid message and ID
         if (!request.query.loggedIn || request.query.loggedIn !== 'yes') {
-            unauthorizedXML = `${unauthorizedXML} <message>Missing loggedIn query parameter set to yes</message>`;
-            unauthorizedXML = `${unauthorizedXML} <id>unauthorized</id>`;
             code = 401; // Update error code
+
+            unauthorizedXML = buildXML('Missing loggedIn query parameter set to yes', 'unauthorized');
         }
         // Valid message
         else {
-            unauthorizedXML = `${unauthorizedXML} <message>This request has the required paraemters</message>`;
+            unauthorizedXML = buildXML('This request has the required paraemters');
         }
-
-        unauthorizedXML = `${unauthorizedXML} </response>`;
 
         return respond(request, response, code, unauthorizedXML, 'text/xml');
     }
@@ -113,12 +107,8 @@ const unauthorized = (request, response) => {
 
 const forbidden = (request, response) => {
     if (request.acceptedTypes[0] === 'text/xml') {
-        let forbiddenXML = '<response>';
-        forbiddenXML = `${forbiddenXML} <message>This is a successful response</message>`;
-        forbiddenXML = `${forbiddenXML} <id>forbidden</id>`;
-        forbiddenXML = `${forbiddenXML} </response>`;
+        let forbiddenXML = buildXML('You do not have access to this content', 'forbidden');
 
-        // return response passing out string and content type
         return respond(request, response, 403, forbiddenXML, 'text/xml');
     }
 
@@ -133,12 +123,8 @@ const forbidden = (request, response) => {
 
 const internal = (request, response) => {
     if (request.acceptedTypes[0] === 'text/xml') {
-        let internalXML = '<response>';
-        internalXML = `${internalXML} <message>This is a successful response</message>`;
-        internalXML = `${internalXML} <id>internalError</id>`;
-        internalXML = `${internalXML} </response>`;
+        let internalXML = buildXML('Internal Server Error. Something went wrong.', 'internalError');
 
-        // return response passing out string and content type
         return respond(request, response, 500, internalXML, 'text/xml');
     }
 
@@ -153,12 +139,8 @@ const internal = (request, response) => {
 
 const notImplemented = (request, response) => {
     if (request.acceptedTypes[0] === 'text/xml') {
-        let notImplementedXML = '<response>';
-        notImplementedXML = `${notImplementedXML} <message>This is a successful response</message>`;
-        notImplementedXML = `${notImplementedXML} <id>notImplemented</id>`;
-        notImplementedXML = `${notImplementedXML} </response>`;
+        let notImplementedXML = buildXML('A get request for this page has not been implemented yet. Check again later for updated content.', 'notImplemented');
 
-        // return response passing out string and content type
         return respond(request, response, 501, notImplementedXML, 'text/xml');
     }
     const notImplementedJSON = {
@@ -172,12 +154,8 @@ const notImplemented = (request, response) => {
 
 const notFound = (request, response) => {
     if (request.acceptedTypes[0] === 'text/xml') {
-        let notFoundXML = '<response>';
-        notFoundXML = `${notFoundXML} <message>This is a successful response</message>`;
-        notFoundXML = `${notFoundXML} <id>notFound</id>`;
-        notFoundXML = `${notFoundXML} </response>`;
+        let notFoundXML = buildXML('The page you are looking for was not found.', 'notFound');
 
-        // return response passing out string and content type
         return respond(request, response, 404, notFoundXML, 'text/xml');
     }
 
@@ -188,6 +166,16 @@ const notFound = (request, response) => {
 
     const notFoundString = JSON.stringify(notFoundJSON);
     respond(request, response, 404, notFoundString, 'application/json');
+}
+
+// Builds an XML string with a message and an id if supplied
+const buildXML = (message, id='') => {
+    let responseXML = '<response>';
+    responseXML = `${responseXML} <message>${message}</message>`;
+    if (id != '') responseXML = `${responseXML} <id>${id}</id>`
+    responseXML = `${responseXML} </response>`;
+
+    return responseXML;
 }
 
 module.exports = {
